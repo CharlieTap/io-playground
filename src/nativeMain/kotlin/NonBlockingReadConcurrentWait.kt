@@ -31,11 +31,11 @@ fun nonBlockingReadConcurrentWait() {
 
         if(bytesRead == -1L) {
             if(errno == EWOULDBLOCK) {
-                println("We would have blocked but instead lets do something")
+                // We would have blocked but let's be smarter and do something whilst we wait on io 🤓
                 thingsToDoWhilstWeWait.forEach { thingToDo ->
                     thingToDo()
                 }
-                //still busy loops if there is nothing to do 🙃
+                //still busy loops if there is nothing to do 🙃🤑
              } else return
         } else {
             // read data when ready

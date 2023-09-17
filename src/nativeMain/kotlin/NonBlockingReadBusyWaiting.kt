@@ -27,7 +27,7 @@ fun nonBlockingReadBusyWaiting() {
 
         if(bytesRead == -1L) {
             if(errno == EWOULDBLOCK) {
-                println("We would have blocked so lets loop again")
+                // We would have blocked so lets loop again and hog the cpu 🤑
                 continue
             }
         } else return

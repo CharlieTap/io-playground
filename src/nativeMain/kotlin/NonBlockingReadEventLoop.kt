@@ -3,7 +3,6 @@ import platform.linux.*
 import platform.posix.O_RDONLY
 import platform.posix.open
 
-
 typealias FileDescriptor = Int
 typealias Callback = () -> Unit
 

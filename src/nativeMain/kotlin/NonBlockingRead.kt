@@ -26,7 +26,7 @@ fun nonBlockingRead() {
 
     if(bytesRead == -1L) {
         if(errno == EWOULDBLOCK) {
-            println("We would have blocked")
+           // We would have blocked but rather we return an error
         }
     }
 }
