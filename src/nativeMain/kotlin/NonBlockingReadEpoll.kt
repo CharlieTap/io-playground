@@ -1,17 +1,14 @@
-import kotlinx.cinterop.ByteVar
-import kotlinx.cinterop.allocArray
-import kotlinx.cinterop.nativeHeap
-import platform.posix.O_NONBLOCK
-import platform.posix.O_RDONLY
-import platform.posix.S_IRUSR
-import platform.posix.S_IWUSR
-import platform.posix.open
-import platform.posix.read
+import kotlinx.cinterop.*
 import platform.linux.*
+import platform.posix.*
 
 private const val FILE_PATH = "/tmp/test.text"
 private const val FILE_FLAGS = O_RDONLY
 private const val FILE_MODE = S_IRUSR or S_IWUSR
+
+private typealias Task = () -> Unit
+
+private val pendingTasks : MutableList<Task> = mutableListOf()
 
 fun nonBlockingReadEpoll() {
 
@@ -34,18 +31,19 @@ fun nonBlockingReadEpoll() {
     }
 
     while(true) {
-        val ready = epoll_wait(epollFd, event.ptr, 1, -1)
-        if (ready == -1) {
-            return
-        }
 
         val bytesRead = read(fileDescriptor, buffer, bytesToRead.toULong())
 
-        if (bytesRead == -1L) {
-            // Something went wrong 🙃
+        if(bytesRead == -1L) {
+            if(errno == EWOULDBLOCK) {
+                println("We would have blocked but instead lets do something and then block until ready")
+                pendingTasks.forEach { task ->
+                    task()
+                }
+                epoll_wait(epollFd, event.ptr, 1, -1) // Block only when we have nothing to do 🤩
+            } else return
         } else {
-            // handle the data read in `buffer`
-            return
+            // read data when ready
         }
     }
 }

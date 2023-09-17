@@ -14,7 +14,7 @@ private const val FILE_PATH = "/tmp/test.text"
 private const val FILE_FLAGS = O_RDONLY
 private const val FILE_MODE = S_IRUSR or S_IWUSR
 
-typealias ThingToDo = () -> Unit
+private typealias ThingToDo = () -> Unit
 
 private val thingsToDoWhilstWeWait : MutableList<ThingToDo> = mutableListOf()
 
